@@ -38,6 +38,15 @@
                                 <animations/>
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </activityIndicatorView>
+                            <searchBar contentMode="redraw" placeholder="Enter an Adress to Search" translatesAutoresizingMaskIntoConstraints="NO" id="c2l-bd-qso">
+                                <rect key="frame" x="0.0" y="64" width="600" height="44"/>
+                                <animations/>
+                                <textInputTraits key="textInputTraits" returnKeyType="search" enablesReturnKeyAutomatically="YES"/>
+                                <scopeButtonTitles>
+                                    <string>Title</string>
+                                    <string>Title</string>
+                                </scopeButtonTitles>
+                            </searchBar>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -45,12 +54,15 @@
                             <constraint firstItem="bvV-2r-UPr" firstAttribute="leading" secondItem="3d3-kP-Fsg" secondAttribute="leadingMargin" constant="-20" id="8fB-95-nti"/>
                             <constraint firstItem="xl4-zN-5iI" firstAttribute="centerY" secondItem="3d3-kP-Fsg" secondAttribute="centerY" id="8fU-zp-DNC"/>
                             <constraint firstItem="uws-be-5DT" firstAttribute="top" secondItem="bvV-2r-UPr" secondAttribute="bottom" id="8hy-Hx-eOm"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="c2l-bd-qso" secondAttribute="trailing" constant="-20" id="EMt-6A-ojL"/>
                             <constraint firstItem="bvV-2r-UPr" firstAttribute="top" secondItem="3d3-kP-Fsg" secondAttribute="topMargin" id="LcJ-WE-1rO"/>
                             <constraint firstItem="xl4-zN-5iI" firstAttribute="centerX" secondItem="3d3-kP-Fsg" secondAttribute="centerX" id="Oyu-nt-LEi"/>
                             <constraint firstAttribute="trailingMargin" secondItem="UuP-i5-6fK" secondAttribute="trailing" constant="-20" id="P7X-j6-IFP"/>
+                            <constraint firstItem="c2l-bd-qso" firstAttribute="leading" secondItem="3d3-kP-Fsg" secondAttribute="leadingMargin" constant="-20" id="UFB-nL-qAx"/>
                             <constraint firstItem="uws-be-5DT" firstAttribute="top" secondItem="UuP-i5-6fK" secondAttribute="bottom" id="jc1-bq-MNk"/>
                             <constraint firstItem="UuP-i5-6fK" firstAttribute="leading" secondItem="3d3-kP-Fsg" secondAttribute="leadingMargin" constant="-20" id="ufS-HY-XaV"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bvV-2r-UPr" secondAttribute="trailing" constant="-20" id="xTv-8K-wSs"/>
+                            <constraint firstItem="c2l-bd-qso" firstAttribute="top" secondItem="B6K-8F-TEv" secondAttribute="bottom" id="zyQ-Zz-KvU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist" id="5MY-Vr-Ckg">
@@ -65,6 +77,7 @@
                         <outlet property="mapLoadingActivityIndicator" destination="xl4-zN-5iI" id="9St-kd-coI"/>
                         <outlet property="mapView" destination="bvV-2r-UPr" id="rvD-vP-eLj"/>
                         <outlet property="notificationLabel" destination="UuP-i5-6fK" id="SQS-Wt-sHe"/>
+                        <outlet property="searchBar" destination="c2l-bd-qso" id="H0s-vk-7q2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lmj-S8-hXj" sceneMemberID="firstResponder"/>

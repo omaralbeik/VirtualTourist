@@ -14,9 +14,9 @@
 		07144C431BCFA952005FD203 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07144C421BCFA952005FD203 /* MapViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		07144C451BCFAB40005FD203 /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07144C441BCFAB40005FD203 /* CoreDataStackManager.swift */; settings = {ASSET_TAGS = (); }; };
 		07144C481BCFAC64005FD203 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 07144C461BCFAC64005FD203 /* Model.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
-		07144C4A1BCFAE41005FD203 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07144C491BCFAE41005FD203 /* Pin.swift */; settings = {ASSET_TAGS = (); }; };
-		07144C4C1BCFAE48005FD203 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07144C4B1BCFAE48005FD203 /* Image.swift */; settings = {ASSET_TAGS = (); }; };
 		07144C511BCFB67A005FD203 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07144C501BCFB67A005FD203 /* Reachability.swift */; settings = {ASSET_TAGS = (); }; };
+		07BB91801BD04CD6007DBD66 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BB917C1BD04CD6007DBD66 /* Image.swift */; settings = {ASSET_TAGS = (); }; };
+		07BB91821BD04CD6007DBD66 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BB917E1BD04CD6007DBD66 /* Pin.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,9 +29,9 @@
 		07144C421BCFA952005FD203 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		07144C441BCFAB40005FD203 /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		07144C471BCFAC64005FD203 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		07144C491BCFAE41005FD203 /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
-		07144C4B1BCFAE48005FD203 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		07144C501BCFB67A005FD203 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		07BB917C1BD04CD6007DBD66 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Image.swift; path = ../Image.swift; sourceTree = "<group>"; };
+		07BB917E1BD04CD6007DBD66 /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Pin.swift; path = ../Pin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,9 +77,9 @@
 		07144C4D1BCFB251005FD203 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				07BB917C1BD04CD6007DBD66 /* Image.swift */,
+				07BB917E1BD04CD6007DBD66 /* Pin.swift */,
 				07144C461BCFAC64005FD203 /* Model.xcdatamodeld */,
-				07144C491BCFAE41005FD203 /* Pin.swift */,
-				07144C4B1BCFAE48005FD203 /* Image.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -173,9 +173,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07BB91801BD04CD6007DBD66 /* Image.swift in Sources */,
 				07144C511BCFB67A005FD203 /* Reachability.swift in Sources */,
-				07144C4A1BCFAE41005FD203 /* Pin.swift in Sources */,
-				07144C4C1BCFAE48005FD203 /* Image.swift in Sources */,
+				07BB91821BD04CD6007DBD66 /* Pin.swift in Sources */,
 				07144C311BCFA86B005FD203 /* AppDelegate.swift in Sources */,
 				07144C431BCFA952005FD203 /* MapViewController.swift in Sources */,
 				07144C451BCFAB40005FD203 /* CoreDataStackManager.swift in Sources */,
