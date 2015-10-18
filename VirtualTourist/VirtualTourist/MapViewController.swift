@@ -98,7 +98,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                             print("error saving context")
                         }
                         
-                    } else {
+                        
+                    }
+                    else {
                         
                         // add pin to context
                         let pin = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: nil, context: self.sharedContext)
@@ -174,8 +176,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 }
             } else {
                 print("pin tapped, shoud move to pinVC")
+                performSegueWithIdentifier("toImageVCSegue", sender: self)
                 
             }
+        }
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "toImageVCSegue" {
+            let imagesVC = segue.destinationViewController as! ImagesViewController
+            imagesVC.mapRegion = mapView.region
+            imagesVC.pin = mapView.selectedAnnotations.first as? Pin
         }
     }
     
@@ -298,7 +309,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     if let placemark = placemarks?.first {
                         //Center the map
                         let placemark = MKPlacemark(placemark: placemark)
-                        let span = MKCoordinateSpanMake(1, 1)
+                        let span = MKCoordinateSpanMake(0.1, 0.1)
                         let region = MKCoordinateRegion(center: placemark.location!.coordinate, span: span)
                         self.mapView.setRegion(region, animated: true)
                     }
@@ -361,6 +372,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         alert.addAction(UIAlertAction(title: action, style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
     }
+    
     
     // loading indicator helper method
     func loading(status status: Bool) {
