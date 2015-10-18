@@ -15,6 +15,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // global variables
     var editButtonIsTapped = false
     
+    // The path where map region info will be saved
+    var filePath : String {
+        let manager = NSFileManager.defaultManager()
+        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        return url.URLByAppendingPathComponent("mapRegion").path!
+    }
+    
     // Storyboard outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var editNavButton: UIBarButtonItem!
@@ -37,6 +44,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         // set initial view for mapView and loading activity indicator ..
         loading(status: true)
+        
+        // restore old map location
+        restoreMapRegion(true)
         
         // fetch old pins
         do {
@@ -71,14 +81,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             // add the pin only when gesture begins to prevent adding multiple pins
             if gestureRecognizer.state == .Began {
                 
+                
                 let touchedPoint = gestureRecognizer.locationInView(mapView)
                 let touchedPointCoordinate = mapView.convertPoint(touchedPoint, toCoordinateFromView: mapView)
                 
                 getAddressFromLocation(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, completion: { (success, locationString, error) -> Void in
                     if success {
                         // add pin to context
-                        _ = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: locationString!, context: self.sharedContext)
-                        
+                        let pin = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: locationString!, context: self.sharedContext)
+                        self.mapView.addAnnotation(pin)
                         // save the context
                         do {
                             try self.sharedContext.save()
@@ -87,11 +98,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                             print("error saving context")
                         }
                         
-                        
                     } else {
                         
                         // add pin to context
-                        _ = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: nil, context: self.sharedContext)
+                        let pin = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: nil, context: self.sharedContext)
+                        self.mapView.addAnnotation(pin)
                         
                         print("failed to geoCode")
                         self.presentMessage("Error", message: error!, action: "OK")
@@ -115,6 +126,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     //MARK: mapView Delegate methods
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if pinView == nil {
@@ -122,7 +134,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             pinView!.canShowCallout = true
             pinView!.pinTintColor = UIColor.blueColor()
             pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-            pinView!.animatesDrop = false
+            
+            pinView!.animatesDrop = true
+            
         }
         else {
             pinView!.annotation = annotation
@@ -132,8 +146,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         if editButtonIsTapped {
-            print("tap tapped in edit mode, tap should be deleted")
             sharedContext.deleteObject(view.annotation as! Pin)
+            mapView.removeAnnotation(view.annotation!)
             
             // save the context
             do {
@@ -147,7 +161,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
-            print("pin tapped, shoud move to pinVC")
+            
+            if editButtonIsTapped {
+                sharedContext.deleteObject(view.annotation as! Pin)
+                
+                // save the context
+                do {
+                    try self.sharedContext.save()
+                }
+                catch {
+                    print("error saving context")
+                }
+            } else {
+                print("pin tapped, shoud move to pinVC")
+                
+            }
         }
     }
     
@@ -156,6 +184,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         //        print("map loaded successfully")
     }
     
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        saveMapRegion()
+    }
     
     // MARK: - geoCoding method
     func getAddressFromLocation(lat lat: Double, long: Double, completion: (success: Bool, locationString: String?, error: String?) -> Void) {
@@ -203,6 +234,48 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 }
             }
         })
+    }
+    
+    
+    func saveMapRegion() {
+        
+        // Place the "center" and "span" of the map into a dictionary
+        // The "span" is the width and height of the map in degrees.
+        // It represents the zoom level of the map.
+        
+        let dictionary = [
+            "latitude" : mapView.region.center.latitude,
+            "longitude" : mapView.region.center.longitude,
+            "latitudeDelta" : mapView.region.span.latitudeDelta,
+            "longitudeDelta" : mapView.region.span.longitudeDelta
+        ]
+        
+        // Archive the dictionary into the filePath
+        NSKeyedArchiver.archiveRootObject(dictionary, toFile: filePath)
+    }
+    
+    //Remembers where the user scrolled in the map.
+    func restoreMapRegion(animated: Bool) {
+        
+        // if we can unarchive a dictionary, we will use it to set the map back to its
+        // previous center and span
+        if let regionDictionary = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [String : AnyObject] {
+            
+            let longitude = regionDictionary["longitude"] as! CLLocationDegrees
+            let latitude = regionDictionary["latitude"] as! CLLocationDegrees
+            let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            
+            let longitudeDelta = regionDictionary["latitudeDelta"] as! CLLocationDegrees
+            let latitudeDelta = regionDictionary["latitudeDelta"] as! CLLocationDegrees
+            let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+            
+            let savedRegion = MKCoordinateRegion(center: center, span: span)
+            mapView.setRegion(savedRegion, animated: animated)
+        }else{
+            let span = MKCoordinateSpanMake(80, 80)
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 40.628595, longitude: 22.945351), span: span)
+            self.mapView.setRegion(region, animated: true)
+        }
     }
     
     
@@ -269,32 +342,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         return fetchedResultsController
         }()
     
-    // Fetched Results Controller Delegate methods
-    func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        // print("fetchedResultController changed")
-    }
-    
-    func controller(controller: NSFetchedResultsController, didChangeObject pinObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        
-        switch type {
-        case .Insert:
-            // print("pin inserted")
-            refreshPins()
-            break
-        case .Delete:
-            print("pin deleted")
-            refreshPins()
-            break
-        case .Update:
-            print("pin updated")
-            break
-        case .Move:
-            print("pin moved")
-            break
-        }
-    }
-    
-    
     //MARK: - EditButtonTapped method
     @IBAction func editNavButonTapped(sender: UIBarButtonItem) {
         if editButtonIsTapped {
@@ -323,17 +370,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         } else {
             mapView.alpha = 1
             mapLoadingActivityIndicator.stopAnimating()
-        }
-    }
-    
-    // refreshPins helper method
-    func refreshPins() {
-        if let pins = fetchedResultsController.fetchedObjects {
-            let annotations = mapView.annotations
-            mapView.removeAnnotations(annotations)
-            mapView.addAnnotations(pins as! [MKPointAnnotation])
-        } else {
-            print("Error refreshing map")
         }
     }
     

@@ -66,6 +66,7 @@
 			children = (
 				07144C301BCFA86B005FD203 /* AppDelegate.swift */,
 				07144C441BCFAB40005FD203 /* CoreDataStackManager.swift */,
+				079FB45D1BD3A4DF003A25BD /* Flickr */,
 				07144C341BCFA86B005FD203 /* Main.storyboard */,
 				07144C4D1BCFB251005FD203 /* Model */,
 				07144C4E1BCFB261005FD203 /* Controllers */,
@@ -101,6 +102,13 @@
 				07144C3C1BCFA86B005FD203 /* Info.plist */,
 			);
 			name = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		079FB45D1BD3A4DF003A25BD /* Flickr */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Flickr;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
