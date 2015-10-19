@@ -175,7 +175,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     print("error saving context")
                 }
             } else {
-                print("pin tapped, shoud move to pinVC")
+                let selectedPin = view.annotation as! Pin
+                Flickr.findImagesforAPin(selectedPin)
                 performSegueWithIdentifier("toImageVCSegue", sender: self)
                 
             }

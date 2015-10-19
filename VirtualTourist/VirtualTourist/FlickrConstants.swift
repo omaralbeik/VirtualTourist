@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Flickr{
+extension Flickr {
     
     struct Constants { //Basic Constants
         // MARK: - URLs
@@ -16,13 +16,16 @@ extension Flickr{
         static let METHOD_NAME = "flickr.photos.search"
         static let API_KEY = "af3a2fcc27a79472e3e795655835e4bd"
         static let EXTRAS = "url_m"
-        static let DATA_FORMAT = "json"
         static let SAFE_SEARCH = "1"
-        static let MAXIMUM_PER_PAGE = "250"
+        static let DATA_FORMAT = "json"
         static let NO_JSON_CALLBACK = "1"
+        static let BOUNDING_BOX_HALF_WIDTH = 1.0
+        static let BOUNDING_BOX_HALF_HEIGHT = 1.0
+        static let LAT_MIN = -90.0
+        static let LAT_MAX = 90.0
+        static let LON_MIN = -180.0
+        static let LON_MAX = 180.0
         
-        static let boxSideLength = 0.05 //The side in latitude,longtitude units of the square to search for photos
-        static let maxNumberOfImagesToDisplay = 24 // I put a cap http://discussions.udacity.com/t/clarifications-about-the-photo-album-section-in-the-specifications/15719
     }
     
     struct MethodArguments{ //Parameter names for Method

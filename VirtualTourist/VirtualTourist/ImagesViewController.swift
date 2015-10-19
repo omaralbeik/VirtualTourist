@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class ImagesViewController: UIViewController, MKMapViewDelegate {
+class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
     
     // Global variables
     var newCollectionBarButtonIsTapped = false
@@ -30,13 +30,18 @@ class ImagesViewController: UIViewController, MKMapViewDelegate {
         // set mapView delegate
         mapView.delegate = self
         
+        // set collectionView delegate
+        collectionView.delegate = self
+        
+        // set collectionView data source
+        collectionView.dataSource = self
+        
+        // set region and add the pin to mapView
         mapView.region = mapRegion
         mapView.addAnnotation(pin!)
         mapView.centerCoordinate = (pin?.coordinate)!
         
         collectionView.backgroundColor = UIColor.whiteColor()
-        print("\(pin!.locationString) Pin has been passed")
-
     }
     
     //MARK: mapView Delegate methods
@@ -59,6 +64,31 @@ class ImagesViewController: UIViewController, MKMapViewDelegate {
     }
     
     
+    //MARK: collectionView Delegate & DataSource
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier("imageCollecionViewCell", forIndexPath: indexPath) as! ImageCollectionViewCell
+        
+        return imageCell
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
+    }
+    
+    //MARK: prepareForSegue
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "toSelectedImageVCSegue" {
+            let selectedImageVC = segue.destinationViewController as! SelectedImageViewController
+            
+            //TODO: connect image to selectedImageVC
+        }
+    }
+    
+    // MARK: newCollectionBarButtonTapped method
     @IBAction func newCollectionBarButtonTapped(sender: UIBarButtonItem) {
         newCollectionBarButtonIsTapped = true
     }

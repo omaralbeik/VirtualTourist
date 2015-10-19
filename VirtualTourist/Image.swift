@@ -12,7 +12,7 @@ import CoreData
 
 class Image: NSManagedObject {
     
-    @NSManaged var imageData: NSData?
+    @NSManaged var imagePath: String?
     @NSManaged var imageUrl: String?
     @NSManaged var pin: NSManagedObject?
     
@@ -27,10 +27,5 @@ class Image: NSManagedObject {
         
         self.imageUrl = imageURL
         
-        if let url = NSURL(string: imageURL) {
-            if let data = NSData(contentsOfURL: url) {
-                self.imageData = data
-            }
-        }
     }
 }
