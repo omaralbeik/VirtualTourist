@@ -18,9 +18,9 @@ class Pin: NSManagedObject, MKAnnotation {
         static let locationString = "locationString"
     }
     
-    @NSManaged var latitude: NSNumber?
+    @NSManaged var latitude: NSNumber
+    @NSManaged var longitude: NSNumber
     @NSManaged var locationString: String
-    @NSManaged var longitude: NSNumber?
     @NSManaged var images: [Image]?
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
@@ -46,7 +46,7 @@ class Pin: NSManagedObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D {
         
         get {
-            return CLLocationCoordinate2D(latitude: latitude as! Double , longitude: longitude as! Double)
+            return CLLocationCoordinate2D(latitude: latitude.doubleValue , longitude: longitude.doubleValue)
         }
         set {
             self.latitude = newValue.latitude

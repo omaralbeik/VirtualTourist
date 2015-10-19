@@ -90,6 +90,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                         // add pin to context
                         let pin = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: locationString!, context: self.sharedContext)
                         self.mapView.addAnnotation(pin)
+                        
+                        Flickr.findImagesforAPin(pin, completion: { (success, urlsArray, error) -> Void in
+                            if success {
+                                for url in urlsArray! {
+                                    let image = Image(imageURL: url, context: self.sharedContext)
+                                    image.pin = pin
+                                }
+                            }
+                        })
+                        
                         // save the context
                         do {
                             try self.sharedContext.save()
@@ -105,6 +115,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                         // add pin to context
                         let pin = Pin(lat: touchedPointCoordinate.latitude, long: touchedPointCoordinate.longitude, title: nil, context: self.sharedContext)
                         self.mapView.addAnnotation(pin)
+                        
+                        Flickr.findImagesforAPin(pin, completion: { (success, urlsArray, error) -> Void in
+                            if success {
+                                for url in urlsArray! {
+                                    let image = Image(imageURL: url, context: self.sharedContext)
+                                    image.pin = pin
+                                }
+                            }
+                        })
                         
                         print("failed to geoCode")
                         self.presentMessage("Error", message: error!, action: "OK")
@@ -176,7 +195,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 }
             } else {
                 let selectedPin = view.annotation as! Pin
-                Flickr.findImagesforAPin(selectedPin)
                 performSegueWithIdentifier("toImageVCSegue", sender: self)
                 
             }
@@ -353,6 +371,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         return fetchedResultsController
         }()
+    
     
     //MARK: - EditButtonTapped method
     @IBAction func editNavButonTapped(sender: UIBarButtonItem) {

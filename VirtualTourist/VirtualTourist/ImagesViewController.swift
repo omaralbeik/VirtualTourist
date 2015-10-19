@@ -7,15 +7,16 @@
 //
 
 import UIKit
+import CoreData
 import MapKit
 
-class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
     
     // Global variables
     var newCollectionBarButtonIsTapped = false
     var mapRegion = MKCoordinateRegion()
     var pin: Pin?
-//    var images = [Image]()
+    //    var images = [Image]()
     
     // Storyboard outlets
     @IBOutlet weak var mapView: MKMapView!
@@ -23,12 +24,17 @@ class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionVie
     @IBOutlet weak var newCollectionBarButton: UIBarButtonItem!
     @IBOutlet weak var bottomToolbar: UIToolbar!
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // set mapView delegate
         mapView.delegate = self
+        
+        // set fetchedResultsController delegate
+        fetchedResultsController.delegate = self
+        
+        print(pin?.images?.count)
         
         // set collectionView delegate
         collectionView.delegate = self
@@ -64,13 +70,23 @@ class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionVie
     }
     
     
-    //MARK: collectionView Delegate & DataSource
+    //    MARK: collectionView Delegate & DataSource
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        
+        return pin!.images!.count
+        
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        // Here is how to replace the actors array using objectAtIndexPath
+        
         let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier("imageCollecionViewCell", forIndexPath: indexPath) as! ImageCollectionViewCell
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            imageCell.imageView!.image = self.pin!.images![indexPath.row].image
+        })
+        
         
         return imageCell
     }
@@ -79,14 +95,42 @@ class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionVie
         performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
     }
     
+    
     //MARK: prepareForSegue
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toSelectedImageVCSegue" {
             let selectedImageVC = segue.destinationViewController as! SelectedImageViewController
             
             //TODO: connect image to selectedImageVC
+            selectedImageVC.image = self.pin!.images![collectionView.indexPathsForSelectedItems()!.first!.row].image!
         }
     }
+    
+    
+    // MARK: - Core Data Convenience
+    
+    // Shared Context from CoreDataStackManager
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+    
+    // Fetched Results Controller
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Image")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            managedObjectContext: self.sharedContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return fetchedResultsController
+        }()
+    
+    // fetchedResultsController delegate methods
+    
     
     // MARK: newCollectionBarButtonTapped method
     @IBAction func newCollectionBarButtonTapped(sender: UIBarButtonItem) {
@@ -97,5 +141,5 @@ class ImagesViewController: UIViewController, MKMapViewDelegate, UICollectionVie
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
+    
 }
