@@ -16,6 +16,7 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 	var newCollectionBarButtonIsTapped = false
 	var mapRegion = MKCoordinateRegion()
 	var pin: Pin?
+	var selectedImage = UIImage()
 	
 	// Storyboard outlets
 	@IBOutlet weak var mapView: MKMapView!
@@ -143,6 +144,8 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 	}
 	
 	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+		let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionViewCell
+		selectedImage = selectedCell.imageView.image!
 		performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
 	}
 	
@@ -153,6 +156,9 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 			let selectedImageVC = segue.destinationViewController as! SelectedImageViewController
 			
 			//TODO: connect image to selectedImageVC
+			selectedImageVC.image = selectedImage
+			
+			
 		}
 	}
 	
