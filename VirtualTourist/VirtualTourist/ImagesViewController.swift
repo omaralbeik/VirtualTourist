@@ -13,20 +13,29 @@ import MapKit
 class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
 	
 	// Global variables
+	var editButtonIsTapped = false
 	var newCollectionBarButtonIsTapped = false
 	var mapRegion = MKCoordinateRegion()
 	var pin: Pin?
-	var selectedImage = UIImage()
+	var selectedImage: Image?
+	
+	var editButton = UIBarButtonItem()
+	
 	
 	// Storyboard outlets
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var collectionView: UICollectionView!
 	@IBOutlet weak var newCollectionBarButton: UIBarButtonItem!
 	@IBOutlet weak var bottomToolbar: UIToolbar!
+	@IBOutlet weak var notificationLabel: UILabel!
 	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		//add edit button to navigation controller
+		editButton = UIBarButtonItem(title: "Edit", style: .Plain, target: self, action: "editButtonTapped")
+		self.navigationItem.rightBarButtonItem = editButton
 		
 		// set mapView delegate
 		mapView.delegate = self
@@ -46,7 +55,8 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 		mapView.centerCoordinate = pin!.coordinate
 		
 		collectionView.backgroundColor = UIColor.whiteColor()
-				
+		notificationLabel.hidden = true
+		
 		// if no images, then hide the collectionView and show the no images label
 		if pin!.images!.isEmpty == true {
 			collectionView.hidden = true
@@ -60,6 +70,21 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 			try fetchedResultsController.performFetch()
 		} catch {
 			print("error fetching old data")
+		}
+	}
+	
+	// edit bar button is tapped
+	func editButtonTapped() {
+		if editButtonIsTapped {
+			editButtonIsTapped = false
+			editButton.title = "Edit"
+			bottomToolbar.hidden = false
+			notificationLabel.hidden = true
+		} else {
+			editButtonIsTapped = true
+			editButton.title = "Done"
+			bottomToolbar.hidden = true
+			notificationLabel.hidden = false
 		}
 	}
 	
@@ -143,10 +168,27 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 		}
 	}
 	
+	
 	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-		let selectedCell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionViewCell
-		selectedImage = selectedCell.imageView.image!
-		performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
+		
+		selectedImage = fetchedResultsController.objectAtIndexPath(indexPath) as? Image
+		
+		if !editButtonIsTapped {
+			performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
+		} else {
+			print("image tapped in edit mode, should delete")
+			
+			// Here we get the image, then delete it from core data
+			let image = fetchedResultsController.objectAtIndexPath(indexPath) as! Image
+			sharedContext.deleteObject(image)
+			
+			do {
+				try self.sharedContext.save()
+			}
+			catch {
+				print("error saving context")
+			}
+		}
 	}
 	
 	
@@ -154,11 +196,7 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "toSelectedImageVCSegue" {
 			let selectedImageVC = segue.destinationViewController as! SelectedImageViewController
-			
-			//TODO: connect image to selectedImageVC
-			selectedImageVC.image = selectedImage
-			
-			
+			selectedImageVC.image = selectedImage!
 		}
 	}
 	
@@ -187,13 +225,50 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 		}()
 	
 	// fetchedResultsController delegate methods
-	func controllerDidChangeContent(controller: NSFetchedResultsController) {
-		print("controller done")
+	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+		
+		switch type {
+		case .Insert:
+			print("image inserted")
+		case .Delete:
+			collectionView.deleteItemsAtIndexPaths([indexPath!])
+		default:
+			break
+		}
 	}
 	
 	// MARK: newCollectionBarButtonTapped method
 	@IBAction func newCollectionBarButtonTapped(sender: UIBarButtonItem) {
 		newCollectionBarButtonIsTapped = true
+		
+		for image in (fetchedResultsController.fetchedObjects! as! [Image]) {
+			self.sharedContext.deleteObject(image)
+			do {
+				try self.sharedContext.save()
+			} catch {
+				print("error saving context")
+			}
+		}
+		
+		Flickr.sharedInstance().getImagesFromPin(pin!, completionHandler: { (success, result, errorString) -> Void in
+			if success {
+				dispatch_async(dispatch_get_main_queue(), {
+					
+					for image in self.pin!.images! {
+						image.pin = self.pin!
+						self.sharedContext.insertObject(image)
+						self.collectionView.reloadData()
+					}
+					
+					do {
+						try self.fetchedResultsController.performFetch()
+					}
+					catch {
+						print("error fetching new images after refresh")
+					}
+				})
+			}
+		})
 	}
 	
 	

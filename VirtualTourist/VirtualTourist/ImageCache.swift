@@ -62,7 +62,7 @@ class ImageCache {
 			
 			do {
 				try NSFileManager.defaultManager().removeItemAtPath(path)
-			} catch _ {}
+			} catch {}
 			
 			return
 		}

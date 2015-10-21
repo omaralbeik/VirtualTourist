@@ -136,7 +136,7 @@ class Flickr: NSObject {
 				print("error saving context")
 			}
 			
-			completionHandler(success: true, result: nil, errorString: nil)
+			completionHandler(success: true, result: pin.images, errorString: nil)
 		}
 		task.resume()
 	}
@@ -156,7 +156,6 @@ class Flickr: NSObject {
 		task.resume()
 		return task
 	}
-	
 	
 	
 	// MARK: Escape HTML Parameters

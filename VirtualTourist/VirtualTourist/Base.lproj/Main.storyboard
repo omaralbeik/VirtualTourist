@@ -26,7 +26,6 @@
                                 <animations/>
                                 <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="36.5" id="HoR-1a-C3L"/>
                                     <constraint firstAttribute="height" constant="36.5" id="o2X-yr-3vW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -170,15 +169,29 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Bbr-E5-SaL"/>
                                 </items>
                             </toolbar>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap Images to Delete" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d3t-Pp-TzJ">
+                                <rect key="frame" x="0.0" y="556" width="600" height="45"/>
+                                <animations/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="F95-jD-qlH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="aUr-70-gvX" firstAttribute="top" secondItem="uAv-Qv-m2k" secondAttribute="bottom" id="0Eo-45-fM9"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="d3t-Pp-TzJ" secondAttribute="bottom" constant="-1" id="3ud-AD-FUY"/>
                             <constraint firstItem="eEt-nr-nG6" firstAttribute="leading" secondItem="YSy-OQ-dCi" secondAttribute="leadingMargin" constant="-20" id="44s-M4-SR9"/>
                             <constraint firstAttribute="trailingMargin" secondItem="aUr-70-gvX" secondAttribute="trailing" constant="-20" id="4OD-2w-yaZ"/>
+                            <constraint firstItem="d3t-Pp-TzJ" firstAttribute="leading" secondItem="YSy-OQ-dCi" secondAttribute="leadingMargin" constant="-20" id="7np-1t-8UF"/>
                             <constraint firstItem="ipK-73-98u" firstAttribute="top" secondItem="aUr-70-gvX" secondAttribute="bottom" constant="8" id="9F9-ET-Mr6"/>
                             <constraint firstItem="aUr-70-gvX" firstAttribute="leading" secondItem="YSy-OQ-dCi" secondAttribute="leadingMargin" constant="-20" id="Edc-ET-OzC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="d3t-Pp-TzJ" secondAttribute="trailing" constant="-20" id="GjF-0T-Vb3"/>
                             <constraint firstItem="IjP-f2-XfA" firstAttribute="centerY" secondItem="YSy-OQ-dCi" secondAttribute="centerY" id="LVB-6w-RrY"/>
                             <constraint firstItem="IjP-f2-XfA" firstAttribute="centerX" secondItem="YSy-OQ-dCi" secondAttribute="centerX" id="Qoy-pt-P8M"/>
                             <constraint firstAttribute="trailingMargin" secondItem="eEt-nr-nG6" secondAttribute="trailing" constant="-20" id="Wy3-eh-a4Y"/>
@@ -193,6 +206,7 @@
                         <outlet property="collectionView" destination="ipK-73-98u" id="P3A-k2-oUA"/>
                         <outlet property="mapView" destination="aUr-70-gvX" id="LjY-R7-118"/>
                         <outlet property="newCollectionBarButton" destination="ybt-Q5-9Q6" id="vJ5-Wm-Huz"/>
+                        <outlet property="notificationLabel" destination="d3t-Pp-TzJ" id="fiO-vb-vHN"/>
                         <segue destination="DSo-cU-7KQ" kind="show" identifier="toSelectedImageVCSegue" id="Jtf-Vf-Bs1"/>
                     </connections>
                 </viewController>

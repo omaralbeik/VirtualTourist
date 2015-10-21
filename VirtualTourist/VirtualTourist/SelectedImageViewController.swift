@@ -10,14 +10,17 @@ import UIKit
 
 class SelectedImageViewController: UIViewController {
 	
-	var image = UIImage()
+	var image: Image?
 	@IBOutlet weak var imageView: UIImageView!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		imageView.image = image
+		if let image = image?.image {
+			imageView.image = image
+		}
 		
+		print(image?.pin.locationString)
 	}
 	
 	override func didReceiveMemoryWarning() {

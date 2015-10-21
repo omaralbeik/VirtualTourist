@@ -100,8 +100,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 					self.presentMessage("Error", message: errorString!, action: "OK")
 					
 					Flickr.sharedInstance().getImagesFromPin(pin, completionHandler: { (success, result, errorString) -> Void in
-						if success {
-							print("flickr api clled")
+						for image in  pin.images! {
+							Flickr.sharedInstance().taskForImage(image.url, completionHandler: { (success, result, errorString) -> Void in
+								print("\(image.id) fetched successfully")
+							})
 						}
 					})
 					

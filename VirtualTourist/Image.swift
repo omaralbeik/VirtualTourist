@@ -14,6 +14,7 @@ class Image: NSManagedObject {
 	
 	@NSManaged var url: String
 	@NSManaged var id: String
+	@NSManaged var path: String?
 	@NSManaged var pin: Pin
 	
 	override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
@@ -26,10 +27,13 @@ class Image: NSManagedObject {
 		
 		self.url = url
 		self.id = id
+		
+		path = ImageCache.Caches.imageCache.pathForIdentifier(id)
 	}
 	
 	var image: UIImage? {
 		get { return ImageCache.Caches.imageCache.imageWithIdentifier(id) }
 		set { ImageCache.Caches.imageCache.storeImage(newValue, withIdentifier: id) }
 	}
+	
 }
