@@ -19,8 +19,6 @@ class SelectedImageViewController: UIViewController {
 		if let image = image?.image {
 			imageView.image = image
 		}
-		
-		print(image?.pin.locationString)
 	}
 	
 	override func didReceiveMemoryWarning() {

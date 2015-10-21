@@ -19,7 +19,7 @@ extension Flickr {
 		static let SAFE_SEARCH = "1"
 		static let DATA_FORMAT = "json"
 		static let NO_JSON_CALLBACK = "1"
-		static let MAXIMUM_PER_PAGE = "100"
+		static let MAXIMUM_PER_PAGE = "25"
 		static let BOUNDING_BOX_HALF_WIDTH = 1.0
 		static let BOUNDING_BOX_HALF_HEIGHT = 1.0
 		static let LAT_MIN = -90.0

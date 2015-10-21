@@ -30,6 +30,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 	@IBOutlet weak var searchBar: UISearchBar!
 	@IBOutlet weak var notificationLabel: UILabel!
 	@IBOutlet weak var mapLoadingActivityIndicator: UIActivityIndicatorView!
+	@IBOutlet weak var loadingView: UIView!
 	
 	// View lifecycle
 	override func viewDidLoad() {
@@ -86,6 +87,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 		// add the pin only when gesture begins to prevent adding multiple pins when gesture state changes
 		if gestureRecognizer.state == .Began {
 			
+			loadingView.hidden = false
+			
 			let touchedPoint = gestureRecognizer.locationInView(mapView)
 			let touchedPointCoordinate = mapView.convertPoint(touchedPoint, toCoordinateFromView: mapView)
 			
@@ -105,6 +108,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 								print("\(image.id) fetched successfully")
 							})
 						}
+						self.loadingView.hidden = true
 					})
 					
 					// save the context
@@ -137,6 +141,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 								print("\(image.id) fetched successfully")
 							})
 						}
+						self.loadingView.hidden = true
 					}
 				})
 				
@@ -242,6 +247,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 	func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
 		if editButtonIsTapped {
 			sharedContext.deleteObject(view.annotation as! Pin)
+			
+			if let images = (view.annotation as! Pin).images {
+				for image in images {
+					ImageCache.sharedInstance().deleteImageWithIdentifier(image.id)
+				}
+			}
+			
+			
 			mapView.removeAnnotation(view.annotation!)
 			
 			// save the context
@@ -272,6 +285,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 			}
 			
 			dispatch_async(dispatch_get_main_queue(), {
+				self.loadingView.hidden = true
 				self.performSegueWithIdentifier("toImageVCSegue", sender: self)
 			})
 		}

@@ -75,6 +75,24 @@ class ImageCache {
 		data.writeToFile(path, atomically: true)
 	}
 	
+	// MARK: - Deleting an image
+	func deleteImageWithIdentifier(identifier: String) {
+		
+		let fileManager = NSFileManager.defaultManager()
+		let path = pathForIdentifier(identifier)
+		
+		if fileManager.fileExistsAtPath(path) {
+			do {
+				try fileManager.removeItemAtPath(path)
+				print("file \(identifier) deleted")
+			}
+			catch {
+				print("file \(identifier) couldn't be deleted")
+			}
+		}
+	}
+	
+	
 	// MARK: - Helper
 	
 	func pathForIdentifier(identifier: String) -> String {

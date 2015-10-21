@@ -42,6 +42,7 @@ class Flickr: NSObject {
 			MethodArguments.extras: Constants.EXTRAS,
 			MethodArguments.format: Constants.DATA_FORMAT,
 			MethodArguments.perPage: Constants.MAXIMUM_PER_PAGE,
+			"accuracy": "16",
 			MethodArguments.noJsonCallBack: Constants.NO_JSON_CALLBACK
 		]
 		

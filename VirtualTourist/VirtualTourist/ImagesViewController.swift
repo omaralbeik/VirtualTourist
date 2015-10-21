@@ -155,10 +155,10 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 						let imageFile = UIImage(data: data as! NSData)
 						
 						// update the model, so that the infrmation gets cashed
-						image.image = imageFile
 						
 						// update the cell later, on the main thread
 						dispatch_async(dispatch_get_main_queue()) {
+							image.image = imageFile
 							cell.imageView!.image = imageFile
 							cell.loadingIndicator.stopAnimating()
 						}
@@ -176,10 +176,10 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 		if !editButtonIsTapped {
 			performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
 		} else {
-			print("image tapped in edit mode, should delete")
 			
 			// Here we get the image, then delete it from core data
 			let image = fetchedResultsController.objectAtIndexPath(indexPath) as! Image
+			ImageCache.sharedInstance().deleteImageWithIdentifier(image.id)
 			sharedContext.deleteObject(image)
 			
 			do {
@@ -242,6 +242,8 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 		newCollectionBarButtonIsTapped = true
 		
 		for image in (fetchedResultsController.fetchedObjects! as! [Image]) {
+			
+			ImageCache.sharedInstance().deleteImageWithIdentifier(image.id)
 			self.sharedContext.deleteObject(image)
 			do {
 				try self.sharedContext.save()
