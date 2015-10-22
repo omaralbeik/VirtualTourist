@@ -126,18 +126,25 @@ class Flickr: NSObject {
 				let id = photo["id"] as! String
 				let url = photo["url_m"] as! String
 				
-				let image = Image(url: url, id: id, context: self.sharedContext)
-				image.pin = pin
+				self.sharedContext.performBlock() {
+					let image = Image(url: url, id: id, context: self.sharedContext)
+					image.pin = pin
+				}
+
 			}
 			
-			do {
-				try self.sharedContext.save()
-			}
-			catch {
-				print("error saving context")
+			self.sharedContext.performBlock() {
+				do {
+					try self.sharedContext.save()
+					completionHandler(success: true, result: pin.images, errorString: nil)
+				}
+				catch {
+					print("error saving context")
+				}
 			}
 			
-			completionHandler(success: true, result: pin.images, errorString: nil)
+
+			
 		}
 		task.resume()
 	}

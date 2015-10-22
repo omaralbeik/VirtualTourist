@@ -171,22 +171,24 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 	
 	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
 		
-		selectedImage = fetchedResultsController.objectAtIndexPath(indexPath) as? Image
-		
-		if !editButtonIsTapped {
-			performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
-		} else {
+		if let selectedImage = fetchedResultsController.objectAtIndexPath(indexPath) as? Image {
+			self.selectedImage = selectedImage
 			
-			// Here we get the image, then delete it from core data
-			let image = fetchedResultsController.objectAtIndexPath(indexPath) as! Image
-			ImageCache.sharedInstance().deleteImageWithIdentifier(image.id)
-			sharedContext.deleteObject(image)
-			
-			do {
-				try self.sharedContext.save()
-			}
-			catch {
-				print("error saving context")
+			if selectedImage.image != nil {
+				
+				if !editButtonIsTapped {
+					performSegueWithIdentifier("toSelectedImageVCSegue", sender: self)
+					
+				} else {
+					ImageCache.sharedInstance().deleteImageWithIdentifier(selectedImage.id)
+					sharedContext.deleteObject(selectedImage)
+					do {
+						try self.sharedContext.save()
+					}
+					catch {
+						print("error saving context")
+					}
+				}
 			}
 		}
 	}
@@ -228,8 +230,6 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 		
 		switch type {
-		case .Insert:
-			print("image inserted")
 		case .Delete:
 			collectionView.deleteItemsAtIndexPaths([indexPath!])
 		default:
@@ -252,25 +252,35 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
 			}
 		}
 		
-		Flickr.sharedInstance().getImagesFromPin(pin!, completionHandler: { (success, result, errorString) -> Void in
-			if success {
-				dispatch_async(dispatch_get_main_queue(), {
+		self.sharedContext.performBlock() {
+			Flickr.sharedInstance().getImagesFromPin(self.pin!, completionHandler: { (success, result, errorString) -> Void in
+				if success {
 					
-					for image in self.pin!.images! {
-						image.pin = self.pin!
-						self.sharedContext.insertObject(image)
-						self.collectionView.reloadData()
+					self.sharedContext.performBlock() {
+						for image in self.pin!.images! {
+							
+							Flickr.sharedInstance().taskForImage(image.url, completionHandler: { (success, result, errorString) -> Void in
+								self.sharedContext.performBlock() {
+									print("\(image.id) fetched")
+									image.pin = self.pin!
+									ImageCache.sharedInstance().storeImage(image.image, withIdentifier: image.id)
+								}
+							})
+							dispatch_async(dispatch_get_main_queue()) {
+								self.collectionView.reloadData()
+							}
+						}
+						do {
+							try self.fetchedResultsController.performFetch()
+						}
+						catch {
+							print("error fetching new images after refresh")
+						}
 					}
-					
-					do {
-						try self.fetchedResultsController.performFetch()
-					}
-					catch {
-						print("error fetching new images after refresh")
-					}
-				})
-			}
-		})
+				}
+			})
+		}
+		
 	}
 	
 	

@@ -104,11 +104,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 					
 					Flickr.sharedInstance().getImagesFromPin(pin, completionHandler: { (success, result, errorString) -> Void in
 						for image in  pin.images! {
+							
 							Flickr.sharedInstance().taskForImage(image.url, completionHandler: { (success, result, errorString) -> Void in
-								print("\(image.id) fetched successfully")
+								self.sharedContext.performBlock() {
+									print("\(image.id) fetched")
+								}
 							})
 						}
-						self.loadingView.hidden = true
+						dispatch_async(dispatch_get_main_queue()) {
+							self.loadingView.hidden = true
+						}
 					})
 					
 					// save the context
@@ -138,10 +143,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 					if success {
 						for image in  pin.images! {
 							Flickr.sharedInstance().taskForImage(image.url, completionHandler: { (success, result, errorString) -> Void in
-								print("\(image.id) fetched successfully")
+								self.sharedContext.performBlock() {
+									print("\(image.id) fetched")
+								}
 							})
 						}
-						self.loadingView.hidden = true
+						dispatch_async(dispatch_get_main_queue()) {
+							self.loadingView.hidden = true
+						}
 					}
 				})
 				
