@@ -18,6 +18,23 @@ class SelectedImageViewController: UIViewController {
 		
 		if let image = image?.image {
 			imageView.image = image
+			
+			//add edit button to navigation controller
+			let editButton = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "shareButtonTapped")
+			self.navigationItem.rightBarButtonItem = editButton
+			
+		}
+	}
+	
+	func shareButtonTapped() {
+		let activityVC = UIActivityViewController(activityItems: [image!.image!], applicationActivities: nil)
+		presentViewController(activityVC, animated: true, completion: nil)
+		activityVC.completionWithItemsHandler = {
+			button in
+			// check if activity completed:
+			if button.1 == true {
+				self.dismissViewControllerAnimated(true, completion: nil)
+			}
 		}
 	}
 	
